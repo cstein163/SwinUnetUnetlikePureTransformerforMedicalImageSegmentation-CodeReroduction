@@ -531,7 +531,7 @@ class LinearProjection(nn.Module):
     def forward(self, x, H, W):
         x = self.norm(x)
         x = self.Linear(x)
-        x = rearrange(x, 'b (h w) d -> b h w d', h=H, w=W)
+        x = rearrange(x, 'b (h w) d -> b d h w', h=H, w=W)
         return x
 
 
@@ -663,14 +663,14 @@ class SwinUnet(nn.Module):
 
         '''segment'''
         y, H, W = self.patch_expanding_3(y, H, W)
-        y = self.linear_projection(x, H, W)
+        y = self.linear_projection(y, H, W)
 
-        return x
+        return y
 
 
 if __name__ == '__main__':
     device = torch.device('cuda:0')
-    img = torch.rand((1, 3, 224, 224))
+    img = torch.rand((1, 3, 512, 512))
     img = img.to(device)
     # patchPartition = PatchPartition(patch_height=4, patch_width=4)
     # out = patchPartition(img)
